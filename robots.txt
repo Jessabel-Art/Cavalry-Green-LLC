@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://cavalry-green-property-care.jessieleonne.chatgpt.site/sitemap.xml
