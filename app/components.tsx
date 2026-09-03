@@ -27,5 +27,5 @@ export function Footer() {
 }
 
 export function FinalCta() {
-  return <section className="final-cta"><Image className="final-bg" src="/final-property.avif" alt="" fill sizes="100vw" /><span className="watermark" aria-hidden="true">PROPERTY CARE</span><p className="eyebrow">Ready when your property needs attention</p><h2>Your property.<br /><em>Handled.</em></h2><p>Tell us what needs attention. We’ll help determine the appropriate next step.</p><div className="hero-actions"><Link className="button button-light" href="/quote">Request a quote</Link><a className="text-link" href="tel:+14723002290">Call 472-300-2290</a></div></section>;
+  return <section className="final-cta"><Image className="final-bg" src="/final-property.png" alt="" fill sizes="100vw" /><span className="watermark" aria-hidden="true">PROPERTY CARE</span><p className="eyebrow">Ready when your property needs attention</p><h2>Your property.<br /><em>Handled.</em></h2><p>Tell us what needs attention. We’ll help determine the appropriate next step.</p><div className="hero-actions"><Link className="button button-light" href="/quote">Request a quote</Link><a className="text-link" href="tel:+14723002290">Call 472-300-2290</a></div></section>;
 }
