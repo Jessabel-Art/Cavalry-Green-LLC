@@ -39,6 +39,24 @@ html,body{max-width:100%;overflow-x:clip}
 .field-error{margin:10px 0 0;color:#8a241f;font-weight:700;text-transform:none;letter-spacing:0}
 .service-selector[aria-describedby] .service-options{outline:3px solid #8a241f;outline-offset:3px}
 .button:disabled{cursor:wait;opacity:.65}
+.honeypot-wrap{display:none !important}
+.photo-upload-section{display:flex;flex-direction:column;gap:16px;padding:22px 20px;border:1px solid rgba(11,13,10,.18);background:rgba(255,255,255,.25)}
+.photo-upload-header{display:flex;flex-direction:column;gap:8px}
+.photo-upload-label{font-size:.7rem;font-weight:800;letter-spacing:.17em;text-transform:uppercase;color:var(--field)}
+.photo-upload-header p,.photo-upload-note,.photo-upload-meta{margin:0;color:rgba(11,13,10,.75);font-size:.92rem;line-height:1.6}
+.photo-upload-trigger{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:fit-content;min-height:52px;padding:0 18px;border:1px solid var(--ink);background:transparent;color:var(--ink);font-weight:800;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .2s ease,color .2s ease}
+.photo-upload-trigger:hover,.photo-upload-trigger:focus-visible{background:var(--ink);color:var(--ivory)}
+.photo-upload-section input[type='file']{display:none}
+.photo-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
+.photo-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border:1px solid rgba(11,13,10,.18);background:rgba(255,255,255,.4)}
+.photo-preview-wrap{width:52px;height:52px;border:1px solid rgba(11,13,10,.18);display:grid;place-items:center;background:rgba(123,131,85,.08);overflow:hidden}
+.photo-preview{width:100%;height:100%;object-fit:cover;display:block}
+.photo-file-indicator{font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--olive)}
+.photo-info{display:flex;flex-direction:column;gap:4px;min-width:0}
+.photo-info strong{overflow-wrap:anywhere;font-size:.98rem}
+.photo-info small{color:rgba(11,13,10,.7)}
+.photo-remove{justify-self:end;border:0;background:transparent;color:#8a241f;font-weight:700;padding:0;cursor:pointer}
+.photo-upload-note a{color:var(--olive);font-weight:700}
 
 @media(max-width:1200px){
   .hero{grid-template-columns:minmax(0,1.05fr) minmax(430px,.95fr) 42px}

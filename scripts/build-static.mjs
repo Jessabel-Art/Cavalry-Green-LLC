@@ -5,6 +5,7 @@ import path from 'node:path';
 const root = process.cwd();
 const distPath = path.join(root, 'dist');
 const outPath = path.join(root, 'out');
+const publicPath = path.join(root, 'public');
 
 fs.rmSync(distPath, { recursive: true, force: true });
 fs.rmSync(outPath, { recursive: true, force: true });
@@ -15,6 +16,19 @@ if (!fs.existsSync(outPath)) {
   throw new Error('Next static export did not generate an out/ folder.');
 }
 
+const apiSource = path.join(publicPath, 'api');
+const uploadsSource = path.join(publicPath, 'uploads');
+const apiTarget = path.join(outPath, 'api');
+const uploadsTarget = path.join(outPath, 'uploads');
+
+if (fs.existsSync(apiSource)) {
+  fs.cpSync(apiSource, apiTarget, { recursive: true, force: true });
+}
+
+if (fs.existsSync(uploadsSource)) {
+  fs.cpSync(uploadsSource, uploadsTarget, { recursive: true, force: true });
+}
+
 fs.renameSync(outPath, distPath);
 
 const routes = ['index.html', 'services/index.html', 'quote/index.html'];
@@ -22,6 +36,14 @@ for (const relative of routes) {
   const filePath = path.join(distPath, relative);
   if (!fs.existsSync(filePath)) {
     throw new Error(`Missing generated route: ${relative}`);
+  }
+}
+
+const phpPaths = ['api/quote-submit.php'];
+for (const relative of phpPaths) {
+  const filePath = path.join(distPath, relative);
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Missing generated PHP route: ${relative}`);
   }
 }
 
