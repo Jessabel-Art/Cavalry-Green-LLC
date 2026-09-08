@@ -80,6 +80,8 @@ function safe_generated_filename(string $requestId, string $originalName, string
     };
 
     $safeBase = preg_replace('/[^A-Za-z0-9._-]+/', '-', basename($originalName));
+    $safeBase = preg_replace('/\.[^.]+$/', '', $safeBase);
+    $safeBase = preg_replace('/\.+$/', '', $safeBase);
     $safeBase = trim($safeBase, '.-_');
     if ($safeBase === '' || strlen($safeBase) > 80) {
         $safeBase = 'photo';

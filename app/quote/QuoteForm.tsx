@@ -180,7 +180,7 @@ export default function QuoteForm() {
           <br />
           <em>reaching out.</em>
         </h2>
-        <p>Your request has been recorded. This does not confirm an appointment or price.</p>
+        <p>Your request has been received. Please allow 24–48 hours for us to review your project and follow up. Submission of a request does not confirm an appointment or final price.</p>
         <button className="text-link" type="button" onClick={() => setStatus('idle')}>
           Send another request
         </button>
@@ -219,12 +219,14 @@ export default function QuoteForm() {
           </p>
         )}
       </fieldset>
-      <fieldset className="field-wide contact-method">
-        <legend>Preferred contact method <span aria-hidden="true">*</span></legend>
+      <div className="field-wide contact-method" role="group" aria-labelledby="contact-method-label">
+        <div id="contact-method-label" className="contact-method-label">Preferred contact method <span aria-hidden="true" className="required-asterisk">*</span></div>
+        <div className="contact-method-options">
         <label><input type="radio" name="contact" value="phone" required /><span>Phone call</span></label>
         <label><input type="radio" name="contact" value="text" /><span>Text message</span></label>
         <label><input type="radio" name="contact" value="email" /><span>Email</span></label>
-      </fieldset>
+        </div>
+      </div>
       <div className="field field-wide">
         <label htmlFor="details">Project details <span aria-hidden="true">*</span></label>
         <textarea id="details" name="details" rows={7} required placeholder="Describe the property condition, approximate scope, specific problem, desired service, and any timing considerations." />
@@ -294,4 +296,3 @@ export default function QuoteForm() {
     </form>
   );
 }
-
