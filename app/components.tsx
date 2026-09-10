@@ -9,7 +9,7 @@ export const serviceFamilies = [
 
 export function Header() {
   return <><a className="skip-link" href="#main-content">Skip to main content</a><header className="site-header">
-    <Link className="brand" href="/" aria-label="Cavalry Green LLC home"><Image src="/cavalry-green-logo.png" alt="" width={100} height={100} priority /></Link>
+    <Link className="brand" href="/" aria-label="Cavalry Green LLC home"><Image src="/cavalry-green-logo.webp" alt="" width={100} height={100} priority /></Link>
     <nav className="desktop-nav" aria-label="Primary navigation"><Link href="/">Home</Link><Link href="/services">Services</Link><Link href="/quote">Request a Quote</Link></nav>
     <a className="phone-link" href="tel:+14723002290">472-300-2290</a>
     <details className="mobile-menu"><summary><span className="sr-only">Menu</span><i></i><i></i></summary><nav aria-label="Mobile navigation"><Link href="/">Home</Link><Link href="/services">Services</Link><Link href="/quote">Request a Quote</Link><a href="tel:+14723002290">Call 472-300-2290</a></nav></details>
@@ -18,7 +18,7 @@ export function Header() {
 
 export function Footer() {
   return <footer className="footer">
-    <div className="footer-lead"><Image src="/cavalry-green-logo.png" alt="Cavalry Green LLC" width={120} height={120} /><p>Veteran owned.<br />Community focused.</p></div>
+    <div className="footer-lead"><Image src="/cavalry-green-logo.webp" alt="Cavalry Green LLC" width={120} height={120} /><p>Veteran owned.<br />Community focused.</p></div>
     <div><p className="footer-label">Navigate</p><Link href="/">Home</Link><Link href="/services">Services</Link><Link href="/quote">Request a Quote</Link></div>
     <div><p className="footer-label">Service area</p><p>Hope Mills · Fayetteville · Raeford · Spring Lake · Cameron · Surrounding communities</p></div>
     <div><p className="footer-label">Talk with us</p><a className="footer-phone" href="tel:+14723002290">472-300-2290</a></div>
@@ -27,5 +27,5 @@ export function Footer() {
 }
 
 export function FinalCta() {
-  return <section className="final-cta"><Image className="final-bg" src="/final-property.png" alt="" fill sizes="100vw" /><span className="watermark" aria-hidden="true">PROPERTY CARE</span><p className="eyebrow">Ready when your property needs attention</p><h2>Your property.<br /><em>Handled.</em></h2><p>Tell us what needs attention. We’ll help determine the appropriate next step.</p><div className="hero-actions"><Link className="button button-light" href="/quote">Request a quote</Link><a className="text-link" href="tel:+14723002290">Call 472-300-2290</a></div></section>;
+  return <section className="final-cta"><Image className="final-bg" src="/final-property.webp" alt="" fill sizes="100vw" /><span className="watermark" aria-hidden="true">PROPERTY CARE</span><p className="eyebrow">Ready when your property needs attention</p><h2>Your property.<br /><em>Handled.</em></h2><p>Tell us what needs attention. We’ll help determine the appropriate next step.</p><div className="hero-actions"><Link className="button button-light" href="/quote">Request a quote</Link><a className="text-link" href="tel:+14723002290">Call 472-300-2290</a></div></section>;
 }

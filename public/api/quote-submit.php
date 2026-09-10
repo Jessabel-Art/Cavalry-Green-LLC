@@ -104,18 +104,18 @@ function get_db(): PDO
 
 function send_notification_email(array $requestData, int $photoCount): bool
 {
-    if (!defined('SMTP_HOST') || !defined('SMTP_USERNAME') || !defined('SMTP_PASSWORD')) {
+    if (!defined('SMTP_HOST') || !defined('SMTP_PORT') || !defined('SMTP_USERNAME') || !defined('SMTP_PASSWORD') || !defined('SMTP_FROM_EMAIL') || !defined('SMTP_FROM_NAME') || !defined('NOTIFICATION_EMAIL')) {
         error_log('Quote notification skipped: SMTP configuration missing.');
         return false;
     }
 
-    $mailerClass = __DIR__ . '/vendor/autoload.php';
-    if (!file_exists($mailerClass)) {
-        error_log('Quote notification skipped: PHPMailer is not installed.');
+    $autoloadPath = __DIR__ . '/vendor/autoload.php';
+    if (!file_exists($autoloadPath)) {
+        error_log('Quote notification skipped: PHPMailer is not installed at ' . __DIR__ . '/vendor/autoload.php');
         return false;
     }
 
-    require_once $mailerClass;
+    require_once $autoloadPath;
 
     if (!class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
         error_log('Quote notification skipped: PHPMailer class not found.');
@@ -132,7 +132,12 @@ function send_notification_email(array $requestData, int $photoCount): bool
     $mail->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : 'tls';
     $mail->From = SMTP_FROM_EMAIL;
     $mail->FromName = SMTP_FROM_NAME;
-    $mail->addReplyTo($requestData['email'], $requestData['name']);
+    $mail->CharSet = 'UTF-8';
+
+    if (!empty($requestData['email']) && filter_var($requestData['email'], FILTER_VALIDATE_EMAIL)) {
+        $mail->addReplyTo($requestData['email'], $requestData['name']);
+    }
+
     $mail->addAddress(NOTIFICATION_EMAIL, 'Cavalry Green LLC');
     $mail->Subject = 'New Quote Request — ' . $requestData['name'];
 
@@ -155,6 +160,7 @@ function send_notification_email(array $requestData, int $photoCount): bool
         return true;
     } catch (Exception $exception) {
         error_log('Quote notification email failed: ' . $exception->getMessage());
+        error_log('Quote notification send failure context: request_id=' . ($requestData['request_id'] ?? 'unknown') . ', name=' . ($requestData['name'] ?? '') . ', email=' . ($requestData['email'] ?: 'not provided') . ', PHPMailer ErrorInfo=' . $mail->ErrorInfo);
         return false;
     }
 }

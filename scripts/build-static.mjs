@@ -20,9 +20,15 @@ const apiSource = path.join(publicPath, 'api');
 const uploadsSource = path.join(publicPath, 'uploads');
 const apiTarget = path.join(outPath, 'api');
 const uploadsTarget = path.join(outPath, 'uploads');
+const vendorSource = path.join(apiSource, 'vendor');
+const vendorTarget = path.join(apiTarget, 'vendor');
 
 if (fs.existsSync(apiSource)) {
   fs.cpSync(apiSource, apiTarget, { recursive: true, force: true });
+}
+
+if (fs.existsSync(vendorSource)) {
+  fs.cpSync(vendorSource, vendorTarget, { recursive: true, force: true });
 }
 
 if (fs.existsSync(uploadsSource)) {
@@ -39,7 +45,7 @@ for (const relative of routes) {
   }
 }
 
-const phpPaths = ['api/quote-submit.php'];
+const phpPaths = ['api/quote-submit.php', 'api/vendor/autoload.php'];
 for (const relative of phpPaths) {
   const filePath = path.join(distPath, relative);
   if (!fs.existsSync(filePath)) {

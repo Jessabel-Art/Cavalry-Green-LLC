@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { Oswald, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
+import { siteUrl, socialImage } from './seo';
 
 const display = Oswald({ variable: '--font-display', subsets: ['latin'], display: 'swap' });
 const body = Source_Sans_3({ variable: '--font-body', subsets: ['latin'], display: 'swap' });
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cavalrygreenllc.com';
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#f2ebdd' };
 
@@ -13,13 +13,21 @@ export const metadata: Metadata = {
   title: { default: 'Cavalry Green LLC | Lawn Care & Landscaping in Hope Mills, NC', template: '%s | Cavalry Green LLC' },
   description: 'Reliable lawn care, landscaping, property cleanups and recurring property maintenance in Hope Mills, Fayetteville, Raeford, Spring Lake and Cameron, NC. Request a quote from Cavalry Green LLC.',
   applicationName: 'Cavalry Green LLC',
-  icons: { icon: '/cavalry-green-logo.png', apple: '/cavalry-green-logo.png' },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+    ],
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'Cavalry Green LLC',
     description: 'Reliable lawn care, landscaping, property cleanups and recurring property maintenance in Hope Mills, Fayetteville, Raeford, Spring Lake and Cameron, NC.',
     siteName: 'Cavalry Green LLC',
     type: 'website',
     url: 'https://cavalrygreenllc.com/',
+    images: [socialImage],
   },
   twitter: { card: 'summary', title: 'Cavalry Green LLC', description: 'Lawn care, landscaping, property cleanup and recurring maintenance in the Fayetteville and Hope Mills area.' },
   robots: { index: true, follow: true },
@@ -27,12 +35,13 @@ export const metadata: Metadata = {
 
 const localBusiness = {
   '@context': 'https://schema.org',
-  '@type': 'LandscapingBusiness',
+  '@type': 'LocalBusiness',
+  '@id': `${siteUrl}/#business`,
   name: 'Cavalry Green LLC',
   url: 'https://cavalrygreenllc.com/',
   telephone: '+1-472-300-2290',
   description: 'Cavalry Green LLC provides lawn care, landscaping, property cleanup and recurring property maintenance for homeowners and properties throughout the Fayetteville and Hope Mills area.',
-  areaServed: ['Hope Mills', 'Fayetteville', 'Raeford', 'Spring Lake', 'Cameron'].map((name) => ({ '@type': 'City', name })),
+  areaServed: ['Hope Mills', 'Fayetteville', 'Raeford', 'Spring Lake', 'Cameron'].map((name) => ({ '@type': 'City', name: `${name}, NC` })),
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
     name: 'Cavalry Green LLC Services',
@@ -43,6 +52,7 @@ const localBusiness = {
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Planting' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Hedge & Shrub Trimming' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Yard Clear-Outs' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Junk Removal' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Brush & Debris Removal' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Leaf Removal' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Property Cleanups' } },
