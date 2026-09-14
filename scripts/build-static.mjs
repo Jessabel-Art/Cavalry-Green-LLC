@@ -35,7 +35,9 @@ if (fs.existsSync(uploadsSource)) {
   fs.cpSync(uploadsSource, uploadsTarget, { recursive: true, force: true });
 }
 
-fs.renameSync(outPath, distPath);
+fs.rmSync(distPath, { recursive: true, force: true });
+fs.cpSync(outPath, distPath, { recursive: true, force: true });
+fs.rmSync(outPath, { recursive: true, force: true });
 
 const routes = ['index.html', 'services/index.html', 'quote/index.html'];
 for (const relative of routes) {

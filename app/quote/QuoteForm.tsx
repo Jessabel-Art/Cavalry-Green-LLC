@@ -1,15 +1,15 @@
-'use client';
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { serviceFamilies } from '../components';
+"use client";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { serviceFamilies } from "../components";
 
 const MAX_PHOTOS = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/heic',
-  'image/heif',
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
 ]);
 
 const formatFileSize = (bytes: number) => {
@@ -24,16 +24,18 @@ type PhotoItem = {
   preview?: string;
 };
 
-type QuoteStatus = 'idle' | 'submitting' | 'success' | 'error';
+type QuoteStatus = "idle" | "submitting" | "success" | "error";
 
 export default function QuoteForm() {
-  const [status, setStatus] = useState<QuoteStatus>('idle');
+  const [status, setStatus] = useState<QuoteStatus>("idle");
   const [serviceError, setServiceError] = useState(false);
-  const [photoError, setPhotoError] = useState('');
+  const [photoError, setPhotoError] = useState("");
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [requestStartedAt, setRequestStartedAt] = useState<number>(() =>
+    Math.floor(Date.now() / 1000),
+  );
   const photoInputRef = useRef<HTMLInputElement | null>(null);
-  const requestStartedAt = useRef(Math.floor(Date.now() / 1000));
 
   useEffect(() => {
     return () => {
@@ -60,7 +62,9 @@ export default function QuoteForm() {
     for (const file of nextFiles) {
       const mime = file.type.toLowerCase();
       const supportedMime = ALLOWED_MIME_TYPES.has(mime);
-      const supportedExtension = /\.(jpe?g|png|webp|heic|heif)$/i.test(file.name);
+      const supportedExtension = /\.(jpe?g|png|webp|heic|heif)$/i.test(
+        file.name,
+      );
 
       if (!supportedMime && !supportedExtension) {
         errors.push(`${file.name} is not a supported photo format.`);
@@ -73,11 +77,13 @@ export default function QuoteForm() {
       }
 
       if (currentPhotos.length + validFiles.length >= MAX_PHOTOS) {
-        errors.push('You can upload up to 5 photos.');
+        errors.push("You can upload up to 5 photos.");
         break;
       }
 
-      const preview = ['image/jpeg', 'image/png', 'image/webp'].includes(mime) ? URL.createObjectURL(file) : undefined;
+      const preview = ["image/jpeg", "image/png", "image/webp"].includes(mime)
+        ? URL.createObjectURL(file)
+        : undefined;
       validFiles.push({
         id: `${file.name}-${file.size}-${Date.now()}-${Math.random().toString(16).slice(2)}`,
         file,
@@ -86,9 +92,9 @@ export default function QuoteForm() {
     }
 
     if (errors.length) {
-      setPhotoError(errors.join(' '));
+      setPhotoError(errors.join(" "));
     } else {
-      setPhotoError('');
+      setPhotoError("");
     }
 
     const combinedPhotos = [...currentPhotos, ...validFiles];
@@ -98,7 +104,7 @@ export default function QuoteForm() {
       setPhotos(combinedPhotos);
     }
 
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const removePhoto = (id: string) => {
@@ -106,13 +112,13 @@ export default function QuoteForm() {
     const removedPhoto = photos.find((photo) => photo.id === id);
     if (removedPhoto?.preview) URL.revokeObjectURL(removedPhoto.preview);
     setPhotos(nextPhotos);
-    setPhotoError('');
+    setPhotoError("");
   };
 
   const resetPhotos = () => {
     revokePhotoPreviews(photos);
     setPhotos([]);
-    if (photoInputRef.current) photoInputRef.current.value = '';
+    if (photoInputRef.current) photoInputRef.current.value = "";
   };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
@@ -120,24 +126,24 @@ export default function QuoteForm() {
     const form = event.currentTarget;
     const data = new FormData(form);
 
-    if (!data.getAll('services').length) {
+    if (!data.getAll("services").length) {
       setServiceError(true);
-      document.getElementById('service-options')?.focus();
+      document.getElementById("service-options")?.focus();
       return;
     }
 
     setServiceError(false);
-    setPhotoError('');
-    setStatus('submitting');
-    setSubmitMessage('');
+    setPhotoError("");
+    setStatus("submitting");
+    setSubmitMessage("");
 
-    photos.forEach((photo) => data.append('photos[]', photo.file));
+    photos.forEach((photo) => data.append("photos[]", photo.file));
 
     try {
-      const response = await fetch('/api/quote-submit.php', {
-        method: 'POST',
+      const response = await fetch("/api/quote-submit.php", {
+        method: "POST",
         body: data,
-        credentials: 'same-origin',
+        credentials: "same-origin",
       });
 
       type SubmitResult = {
@@ -147,31 +153,39 @@ export default function QuoteForm() {
 
       const parsed = (await response.json().catch(() => ({
         success: false,
-        message: 'We couldn’t send your request. Please try again.',
+        message: "We couldn’t send your request. Please try again.",
       }))) as SubmitResult | unknown;
-      const result = typeof parsed === 'object' && parsed !== null ? (parsed as SubmitResult) : {
-        success: false,
-        message: 'We couldn’t send your request. Please try again.',
-      };
+      const result =
+        typeof parsed === "object" && parsed !== null
+          ? (parsed as SubmitResult)
+          : {
+              success: false,
+              message: "We couldn’t send your request. Please try again.",
+            };
 
       if (!response.ok || !result.success) {
-        setStatus('error');
-        setSubmitMessage(result.message || 'We couldn’t send your request. Please try again or call 472-300-2290.');
+        setStatus("error");
+        setSubmitMessage(
+          result.message ||
+            "We couldn’t send your request. Please try again or call 472-300-2290.",
+        );
         return;
       }
 
-      setStatus('success');
-      setSubmitMessage('');
+      setStatus("success");
+      setSubmitMessage("");
       resetPhotos();
       form.reset();
-      requestStartedAt.current = Math.floor(Date.now() / 1000);
+      setRequestStartedAt(Math.floor(Date.now() / 1000));
     } catch {
-      setStatus('error');
-      setSubmitMessage('We couldn’t send your request. Please try again or call 472-300-2290.');
+      setStatus("error");
+      setSubmitMessage(
+        "We couldn’t send your request. Please try again or call 472-300-2290.",
+      );
     }
   };
 
-  if (status === 'success') {
+  if (status === "success") {
     return (
       <section className="form-success" role="status">
         <p className="eyebrow">Request received</p>
@@ -180,8 +194,16 @@ export default function QuoteForm() {
           <br />
           <em>reaching out.</em>
         </h2>
-        <p>Your request has been received. Please allow 24–48 hours for us to review your project and follow up. Submission of a request does not confirm an appointment or final price.</p>
-        <button className="text-link" type="button" onClick={() => setStatus('idle')}>
+        <p>
+          Your request has been received. Please allow 24–48 hours for us to
+          review your project and follow up. Submission of a request does not
+          confirm an appointment or final price.
+        </p>
+        <button
+          className="text-link"
+          type="button"
+          onClick={() => setStatus("idle")}
+        >
           Send another request
         </button>
       </section>
@@ -189,29 +211,76 @@ export default function QuoteForm() {
   }
 
   return (
-    <form className="quote-form" onSubmit={submit} aria-busy={status === 'submitting'}>
-      <input type="hidden" name="submission_time" value={requestStartedAt.current} />
+    <form
+      className="quote-form"
+      onSubmit={submit}
+      aria-busy={status === "submitting"}
+    >
+      <input type="hidden" name="submission_time" value={requestStartedAt} />
       <div className="field field-wide honeypot-wrap" aria-hidden="true">
         <label htmlFor="website">Website</label>
-        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <input
+          id="website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+        />
       </div>
 
-      <div className="field"><label htmlFor="name">Name <span aria-hidden="true">*</span></label><input id="name" name="name" autoComplete="name" required /></div>
-      <div className="field"><label htmlFor="phone">Phone <span aria-hidden="true">*</span></label><input id="phone" name="phone" type="tel" autoComplete="tel" required /></div>
-      <div className="field field-wide"><label htmlFor="email">Email</label><input id="email" name="email" type="email" autoComplete="email" /></div>
-      <div className="field field-wide"><label htmlFor="address">Property address / service location <span aria-hidden="true">*</span></label><input id="address" name="address" autoComplete="street-address" required /></div>
-      <fieldset className="field-wide service-selector" aria-describedby={serviceError ? 'service-error' : undefined}>
+      <div className="field">
+        <label htmlFor="name">
+          Name <span aria-hidden="true">*</span>
+        </label>
+        <input id="name" name="name" autoComplete="name" required />
+      </div>
+      <div className="field">
+        <label htmlFor="phone">
+          Phone <span aria-hidden="true">*</span>
+        </label>
+        <input id="phone" name="phone" type="tel" autoComplete="tel" required />
+      </div>
+      <div className="field field-wide">
+        <label htmlFor="email">Email</label>
+        <input id="email" name="email" type="email" autoComplete="email" />
+      </div>
+      <div className="field field-wide">
+        <label htmlFor="address">
+          Property address / service location <span aria-hidden="true">*</span>
+        </label>
+        <input
+          id="address"
+          name="address"
+          autoComplete="street-address"
+          required
+        />
+      </div>
+      <fieldset
+        className="field-wide service-selector"
+        aria-describedby={serviceError ? "service-error" : undefined}
+      >
         <legend>
           Service needed <span aria-hidden="true">*</span>
           <small>Select all that apply</small>
         </legend>
-        <div className="service-options" id="service-options" tabIndex={serviceError ? -1 : undefined}>
-          {serviceFamilies.flatMap((family) => family.items).map((item) => (
-            <label key={item}>
-              <input type="checkbox" name="services" value={item} onChange={() => setServiceError(false)} />
-              <span>{item}</span>
-            </label>
-          ))}
+        <div
+          className="service-options"
+          id="service-options"
+          tabIndex={serviceError ? -1 : undefined}
+        >
+          {serviceFamilies
+            .flatMap((family) => family.items)
+            .map((item) => (
+              <label key={item}>
+                <input
+                  type="checkbox"
+                  name="services"
+                  value={item}
+                  onChange={() => setServiceError(false)}
+                />
+                <span>{item}</span>
+              </label>
+            ))}
         </div>
         {serviceError && (
           <p className="field-error" id="service-error" role="alert">
@@ -219,23 +288,54 @@ export default function QuoteForm() {
           </p>
         )}
       </fieldset>
-      <div className="field-wide contact-method" role="group" aria-labelledby="contact-method-label">
-        <div id="contact-method-label" className="contact-method-label">Preferred contact method <span aria-hidden="true" className="required-asterisk">*</span></div>
+      <div
+        className="field-wide contact-method"
+        role="group"
+        aria-labelledby="contact-method-label"
+      >
+        <div id="contact-method-label" className="contact-method-label">
+          Preferred contact method{" "}
+          <span aria-hidden="true" className="required-asterisk">
+            *
+          </span>
+        </div>
         <div className="contact-method-options">
-        <label><input type="radio" name="contact" value="phone" required /><span>Phone call</span></label>
-        <label><input type="radio" name="contact" value="text" /><span>Text message</span></label>
-        <label><input type="radio" name="contact" value="email" /><span>Email</span></label>
+          <label>
+            <input type="radio" name="contact" value="phone" required />
+            <span>Phone call</span>
+          </label>
+          <label>
+            <input type="radio" name="contact" value="text" />
+            <span>Text message</span>
+          </label>
+          <label>
+            <input type="radio" name="contact" value="email" />
+            <span>Email</span>
+          </label>
         </div>
       </div>
       <div className="field field-wide">
-        <label htmlFor="details">Project details <span aria-hidden="true">*</span></label>
-        <textarea id="details" name="details" rows={7} required placeholder="Describe the property condition, approximate scope, specific problem, desired service, and any timing considerations." />
+        <label htmlFor="details">
+          Project details <span aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="details"
+          name="details"
+          rows={7}
+          required
+          placeholder="Describe the property condition, approximate scope, specific problem, desired service, and any timing considerations."
+        />
       </div>
 
       <div className="field field-wide photo-upload-section">
         <div className="photo-upload-header">
-          <label htmlFor="photos" className="photo-upload-label">PROJECT PHOTOS — OPTIONAL</label>
-          <p>Upload photos of the property, area, debris, damage, or work you would like completed.</p>
+          <label htmlFor="photos" className="photo-upload-label">
+            PROJECT PHOTOS — OPTIONAL
+          </label>
+          <p>
+            Upload photos of the property, area, debris, damage, or work you
+            would like completed.
+          </p>
         </div>
 
         <label className="photo-upload-trigger" htmlFor="photos">
@@ -252,9 +352,17 @@ export default function QuoteForm() {
           onChange={handlePhotoChange}
         />
 
-        <p className="photo-upload-meta">Up to 5 photos · Maximum 10 MB each<br />JPG, JPEG, PNG, HEIC, HEIF, or WEBP</p>
+        <p className="photo-upload-meta">
+          Up to 5 photos · Maximum 10 MB each
+          <br />
+          JPG, JPEG, PNG, HEIC, HEIF, or WEBP
+        </p>
 
-        {photoError && <p className="field-error" role="alert">{photoError}</p>}
+        {photoError && (
+          <p className="field-error" role="alert">
+            {photoError}
+          </p>
+        )}
 
         {photos.length > 0 && (
           <ul className="photo-list" aria-live="polite">
@@ -262,16 +370,30 @@ export default function QuoteForm() {
               <li key={photo.id} className="photo-item">
                 <div className="photo-preview-wrap">
                   {photo.preview ? (
-                    <img src={photo.preview} alt={photo.file.name} className="photo-preview" />
+                    <img
+                      src={photo.preview}
+                      alt={photo.file.name}
+                      className="photo-preview"
+                    />
                   ) : (
-                    <span className="photo-file-indicator" aria-label="Photo file">IMG</span>
+                    <span
+                      className="photo-file-indicator"
+                      aria-label="Photo file"
+                    >
+                      IMG
+                    </span>
                   )}
                 </div>
                 <div className="photo-info">
                   <strong>{photo.file.name}</strong>
                   <small>{formatFileSize(photo.file.size)}</small>
                 </div>
-                <button type="button" className="photo-remove" onClick={() => removePhoto(photo.id)} aria-label={`Remove ${photo.file.name}`}>
+                <button
+                  type="button"
+                  className="photo-remove"
+                  onClick={() => removePhoto(photo.id)}
+                  aria-label={`Remove ${photo.file.name}`}
+                >
                   Remove
                 </button>
               </li>
@@ -280,15 +402,27 @@ export default function QuoteForm() {
         )}
 
         <p className="photo-upload-note">
-          Need to send more? Email additional photos to <a href="mailto:cavalrygreenllc@gmail.com">cavalrygreenllc@gmail.com</a>
+          Need to send more? Email additional photos to{" "}
+          <a href="mailto:cavalrygreenllc@gmail.com">
+            cavalrygreenllc@gmail.com
+          </a>
         </p>
       </div>
 
-      {status === 'error' && <p className="form-error" role="alert">{submitMessage || 'We couldn’t send your request. Please try again or call 472-300-2290.'}</p>}
+      {status === "error" && (
+        <p className="form-error" role="alert">
+          {submitMessage ||
+            "We couldn’t send your request. Please try again or call 472-300-2290."}
+        </p>
+      )}
 
       <div className="form-submit field-wide">
-        <button className="button button-olive" type="submit" disabled={status === 'submitting'}>
-          {status === 'submitting' ? 'Sending request…' : 'Request a quote'}
+        <button
+          className="button button-olive"
+          type="submit"
+          disabled={status === "submitting"}
+        >
+          {status === "submitting" ? "Sending request…" : "Request a quote"}
           <span aria-hidden="true">→</span>
         </button>
         <p>Submitting a request does not confirm an appointment or price.</p>
