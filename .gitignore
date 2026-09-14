@@ -27,7 +27,10 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local environment
-.env*/public/api/config.php
+.env
+.env.*
+/public/api/config.php
+/public/api/config.local.php
 # deployment and generated files
 .vercel
 next-env.d.ts
